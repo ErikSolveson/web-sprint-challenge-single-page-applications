@@ -1,8 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Pizza from "./components/Pizza";
 import Form from "./components/Form";
 import { Link, Route, Switch } from "react-router-dom";
 import axios from "axios";
+import * as yup from "yup";
+import schema from "./validation/formSchema";
 
 const initialFormValues = {
   name: "",
@@ -18,8 +20,10 @@ const initialFromErrors = {
   sausage: false,
   olives: false,
   roastedbellpepper: false,
-  specialinstructions: false,
+  specialinstructions: "",
 };
+
+const initialDisabled = true;
 
 const API_URL = `https://reqres.in/api/orders`;
 
@@ -27,15 +31,27 @@ const App = () => {
   const [formValues, setFormValues] = useState(initialFormValues);
   const [pizzas, setPizzas] = useState([]);
   const [formErrors, setFormErrors] = useState(initialFromErrors);
+  const [disabled, setDisabled] = useState(initialDisabled);
 
   const inputChange = (name, value) => {
+    yup
+      .reach(schema, name)
+      .validate(value)
+      .then(() => {
+        setFormErrors({ ...formErrors, [name]: "" });
+      })
+      .catch((err) => {
+        setFormErrors({ ...formErrors, [name]: err.message });
+      });
+
     setFormValues({
       ...formValues,
-      [name]: value, // NOT AN ARRAY, nice little syntax: dynamic property, computed property
+      [name]: value,
     });
   };
 
   const postNewPizza = (newPizza) => {
+    console.log("posting a new pizza");
     axios
       .post(API_URL, newPizza)
       .then((res) => {
@@ -44,7 +60,7 @@ const App = () => {
       })
       .catch((err) => console.log(err))
       .finally(() => {
-        setFormValues(initialFromErrors);
+        setFormValues(initialFormValues);
       });
   };
 
@@ -52,17 +68,22 @@ const App = () => {
     console.log("trying to submit the form");
     const newPizza = {
       name: formValues.name.trim(),
-      // email: formValues.email.trim(),
-      // role: formValues.role.trim(),
+      size: formValues.size.trim(),
+
+      toppings: ["pepperoni", "sausage", "olives", "roastedbellpepper"].filter(
+        (topping) => formValues[topping]
+      ),
       specialinstructions: formValues.specialinstructions.trim(),
-      // 🔥 STEP 7- WHAT ABOUT HOBBIES?
-      // hobbies: ["hiking", "reading", "coding"].filter(
-      //   (hobby) => formValues[hobby]
-      // ),
     };
-    // 🔥 STEP 8- POST NEW FRIEND USING HELPER
+
     postNewPizza(newPizza);
   };
+
+  useEffect(() => {
+    schema.isValid(formValues).then((valid) => {
+      setDisabled(!valid);
+    });
+  }, [formValues]);
 
   return (
     <>
@@ -75,9 +96,6 @@ const App = () => {
           </Link>
         </>
       }
-      {pizzas.map((pizza) => {
-        return <Pizza name={pizza.name} />;
-      })}
 
       <Switch>
         <Route path="/pizza">
@@ -85,10 +103,21 @@ const App = () => {
             values={formValues}
             change={inputChange}
             submit={formSubmit}
-            // errors={formErrors}
+            errors={formErrors}
+            disabled={disabled}
           />
         </Route>
       </Switch>
+
+      {pizzas.map((pizza) => {
+        return (
+          <Pizza
+            name={pizza.name}
+            toppings={pizza.toppings}
+            size={pizza.size}
+          />
+        );
+      })}
     </>
   );
 };
