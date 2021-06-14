@@ -7,5 +7,6 @@ describe("pizza order form", () => {
 
   it("sanity checks", () => {
     expect(5).toBe.equal(5);
+    expect(5).toBe.equal(6);
   });
 });
