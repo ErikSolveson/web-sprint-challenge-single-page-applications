@@ -1,18 +1,16 @@
 import React from "react";
 
 export default function Form(props) {
-  const { values, submit, change, disabled, errors } = props;
+  const { values, submit, change } = props;
   return (
-    <form id="pizza-form">
+    <form id="pizza-form" onSubmit={submit}>
       <label class="input-label">
-        {" "}
         Name
         <input type="text" name="name" id="name-input" />
       </label>
       <br />
       {/* this is the dropdown for the pizza size */}
       <label class="input-label">
-        {" "}
         Size
         <select id="size-dropdown">
           <option value="">- please select -</option>
@@ -26,7 +24,7 @@ export default function Form(props) {
         Pepperoni
         <input
           type="checkbox"
-          name="Pepperoni"
+          name="pepperoni"
           // checked={values.hiking}
           // onChange={onChange}
         />
@@ -36,7 +34,7 @@ export default function Form(props) {
         Sausage
         <input
           type="checkbox"
-          name="Sausage"
+          name="sausage"
           // checked={values.hiking}
           // onChange={onChange}
         />
@@ -46,7 +44,7 @@ export default function Form(props) {
         Olives
         <input
           type="checkbox"
-          name="Olives"
+          name="olives"
           // checked={values.hiking}
           // onChange={onChange}
         />
@@ -56,17 +54,17 @@ export default function Form(props) {
         Roasted Bell Pepper
         <input
           type="checkbox"
-          name="Roasted Bell Pepper"
+          name="roastedbellpepper"
           // checked={values.hiking}
           // onChange={onChange}
         />
       </label>
       <br />
       <label class="input-label">
-        {" "}
         Special Instructions
         <input type="text" name="name" id="special-text" />
       </label>
+      <button>Submit</button>
     </form>
   );
 }
