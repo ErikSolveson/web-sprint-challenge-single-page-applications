@@ -97,10 +97,12 @@ export default function Form(props) {
           value={values.specialinstructions}
         />
       </label>
-      <button disabled={disabled}>Submit</button>
+      <button id="order-button" disabled={disabled}>
+        Order
+      </button>
 
       <div className="errors">
-        {/* 🔥 RENDER THE VALIDATION ERRORS HERE */}
+        {/* RENDER THE VALIDATION ERRORS HERE */}
         <div>{errors.name}</div>
         <div>{errors.size}</div>
       </div>
